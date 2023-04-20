@@ -1,0 +1,5 @@
+clear all; clc;
+File_ID = fopen("HW3-PA1\pa1-debug-a-calbody.txt");
+
+A = fscanf(File_ID,'%f',inf);
+fclose(File_ID);
