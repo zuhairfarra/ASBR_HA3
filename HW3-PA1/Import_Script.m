@@ -21,7 +21,7 @@ opts.ExtraColumnsRule = "ignore";
 opts.EmptyLineRule = "read";
 
 % Import the data
-pa1debugacalbody = readtable("C:\Users\Zuhair\Documents\UTEXAS\Spring 2023\ASBR\HW3-PA1\HW3-PA1\pa1-debug-a-calbody.txt", opts);
+pa1debugacalbody = readtable("HW3-PA1\pa1-debug-a-calbody.txt", opts);
 
 %% Convert to output type
 pa1debugacalbody = table2array(pa1debugacalbody);

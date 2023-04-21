@@ -68,8 +68,37 @@ frame_6 = Data_2(5*S+2:6*S+1,:);
 frame_7 = Data_2(6*S+2:7*S+1,:);
 frame_8 = Data_2(7*S+2:8*S+1,:);
 
-D_data(:,:,1) = frame_1(1:N_D+1,:);
-D_data(:,:,2) = frame_2(1:N_D+1,:);
+D_data(:,:,1) = frame_1(1:N_D,:);
+D_data(:,:,2) = frame_2(1:N_D,:);
 
+D = D_data(:,:,1);
 
+D_sum = zeros(1,3);
+for idx = 1:N_D
+    D_sum = D_sum + D(idx,:);
+end
+D_bar = D_sum/N_D;
 
+D_mod = D;
+for idx=1:N_D
+    D_mod(idx,:) = D(idx,:) - D_bar;
+end
+
+M = zeros(4*N_D,4);
+for idx = 1:length(d_mod(1,:))
+    a = d_mod(idx,:)';
+    b = D_mod(idx,:)';
+    
+    M((idx-1)*4+1:idx*4,:) = [0 (b-a)';...
+                  (b-a) ssm(b+a)];
+end
+
+[U_1,S_1,V_1] = svd(M);
+
+Quat1 = quaternion(V_1(:,end)');
+R1 = quat2rotm(Quat1);
+
+p = D_bar' - R1*d_bar';
+
+T = [R1 p;...
+     0 0 0 1];
