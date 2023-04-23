@@ -59,6 +59,9 @@ n = length(Data_2(:,1));
 idx = 1;
 S = N_D + N_A + N_C;
 
+for idx = 1:N_frame
+
+end
 frame_1 = Data_2(2:S+1,:);
 frame_2 = Data_2(S+2:2*S+1,:);
 frame_3 = Data_2(2*S+2:3*S+1,:);
@@ -85,7 +88,7 @@ for idx=1:N_D
 end
 
 M = zeros(4*N_D,4);
-for idx = 1:length(d_mod(1,:))
+for idx = 1:length(d_mod(:,1))
     a = d_mod(idx,:)';
     b = D_mod(idx,:)';
     
@@ -96,5 +99,9 @@ end
 [U_1,S_1,V_1] = svd(M);
 
 Quat1 = quaternion(V_1(:,end)');
-R1 = quat2rotm(Quat1)
+R1 = quat2rotm(Quat1);
 
+p = D_bar' - R1*d_bar';
+
+T = [R1 p;...
+     0 0 0 1];
