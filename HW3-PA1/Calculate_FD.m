@@ -8,7 +8,7 @@ d_sum = zeros(1,3);
 for idx = 1:N_D
     d_sum = d_sum + d_data(idx,:);
 end
-d_bar = d_sum/N_D
+d_bar = d_sum/N_D;
 
 d_mod = d_data;
 for idx=1:N_D
