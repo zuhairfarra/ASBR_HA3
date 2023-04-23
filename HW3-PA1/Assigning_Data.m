@@ -59,6 +59,10 @@ n = length(Data_2(:,1));
 idx = 1;
 S = N_D + N_A + N_C;
 
+for idx = 1:N_frame
+    frames(:,:,idx) = Data_2((idx-1)*S+2:idx*S+1,:);
+end
+
 frame_1 = Data_2(2:S+1,:);
 frame_2 = Data_2(S+2:2*S+1,:);
 frame_3 = Data_2(2*S+2:3*S+1,:);
@@ -85,7 +89,7 @@ for idx=1:N_D
 end
 
 M = zeros(4*N_D,4);
-for idx = 1:length(d_mod(1,:))
+for idx = 1:length(d_mod(:,1))
     a = d_mod(idx,:)';
     b = D_mod(idx,:)';
     
