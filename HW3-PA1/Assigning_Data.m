@@ -1,4 +1,5 @@
 %% Problem 3
+clear all; clc;
 file_list = struct();
 file_list.CalBody_FileList = {'pa1-debug-a-calbody.txt',...
                               'pa1-debug-b-calbody.txt',...
@@ -65,16 +66,16 @@ N_Files = length(file_list.CalBody_FileList);
 % 
 % %% Registration algorithm
 % 
-d_sum = zeros(1,3);
-for idx = 1:N_D
-    d_sum = d_sum + d_data(idx,:);
-end
-d_bar = d_sum/N_D;
-
-d_mod = d_data;
-for idx=1:N_D
-    d_mod(idx,:) = d_data(idx,:) - d_bar;
-end
+% d_sum = zeros(1,3);
+% for idx = 1:N_D
+%     d_sum = d_sum + d_data(idx,:);
+% end
+% d_bar = d_sum/N_D;
+% 
+% d_mod = d_data;
+% for idx=1:N_D
+%     d_mod(idx,:) = d_data(idx,:) - d_bar;
+% end
 % 
 % %%
 % 
@@ -159,7 +160,7 @@ for kdx=1:N_Files
     C_Expected = zeros(3,N_c,N_frame);
     
     for idx = 1:N_frame
-        F_D(:,:,idx) = Calculate_FD(Data_2,D_data(:,:,idx),N_D);
+        F_D(:,:,idx) = Calculate_FD(My_Data,D_data(:,:,idx),N_D);
     
         A = A_data(:,:,idx);
     
@@ -197,6 +198,11 @@ for kdx=1:N_Files
         for jdx =1:N_c
             C_Expected(:,jdx,idx) = F_DA(1:3,4) + F_DA(1:3,1:3)*c_data(jdx,:)';
         end
+
+        if isequal(kdx,3)
+            C_Output = C_Expected(:,:,idx)'
+        end
+
         C_Output = C_Expected(:,:,idx)';
         
         if isequal(idx,1)
@@ -213,84 +219,112 @@ for kdx=1:N_Files
     end
 
 end
-%% DEbug
-My_Data = Import_data_from_file(file_list.CalBody_FileList{1});
-
-N_D = My_Data(1,1);
-d_data = My_Data(2:N_D+1,:);
-
-d_sum = zeros(1,3);
-for idx = 1:N_D
-    d_sum = d_sum + d_data(idx,:);
-end
-d_bar = d_sum/N_D;
-
-d_mod = d_data;
-for idx=1:N_D
-    d_mod(idx,:) = d_data(idx,:) - d_bar;
-end
-
-Data_2 = Import_data_from_file(file_list.CalReadings_FileList{1});
-N_D = Data_2(1,1);
-N_A = Data_2(1,2);
-N_C = Data_2(1,3);
-N_frame = 8;
-
-S = N_D + N_A + N_C;
-
-for idx = 1:N_frame
-    frames(:,:,idx) = Data_2((idx-1)*S+2:idx*S+1,:);
-end
-
-D_data(:,:,:) = frames(1:N_D,:,:);
-A_data(:,:,:) = frames(N_D+1:N_D+N_A,:,:);
-C_data(:,:,:) = frames(N_D+N_A+1:S,:,:);
-
-F_D = zeros(4,4,N_frame);
-F_A = zeros(4,4,N_frame);
-C_Expected = zeros(3,N_c,N_frame);
-
-for idx = 1:N_frame
-    F_D(:,:,idx) = Calculate_FD(Data_2,D_data(:,:,idx),N_D);
-
-    A = A_data(:,:,idx);
-
-    A_sum = zeros(1,3);
-    for jdx = 1:N_A
-        A_sum = A_sum + A(jdx,:);
-    end
-    A_bar = A_sum/N_A;
-    
-    A_mod = A;
-    for jdx=1:N_A
-        A_mod(jdx,:) = A(jdx,:) - A_bar;
-    end
-    
-    M = zeros(4*N_A,4);
-    for jdx = 1:length(a_mod(:,1))
-        a = a_mod(jdx,:)';
-        b = A_mod(jdx,:)';
-        
-        M((jdx-1)*4+1:jdx*4,:) = [0 (b-a)';...
-                      (b-a) ssm(b+a)];
-    end
-    
-    [U_A,S_A,V_A] = svd(M);
-    
-    Quat_A = quaternion(V_A(:,end)');
-    R_A = quat2rotm(Quat_A);
-    
-    p = A_bar' - R_A*a_bar';
-    
-    F_A(:,:,idx) = [R_A p;...
-                  0 0 0 1];
-
-    F_DA = F_D(:,:,idx)\F_A(:,:,idx);
-    for jdx =1:N_c
-        C_Expected(:,jdx,idx) = F_DA(1:3,4) + F_DA(1:3,1:3)*c_data(jdx,:)';
-    end
-    C_Output(:,:,idx) = C_Expected(:,:,idx)';
-end
+% %% DEbug
+% file_idx = 1;
+% My_Data = Import_data_from_file(file_list.CalBody_FileList{file_idx});
+% 
+% N_D = My_Data(1,1);
+% N_c = My_Data(1,3);
+% d_data = My_Data(2:N_D+1,:);
+% n = length(My_Data(:,1));
+% 
+% d_sum = zeros(1,3);
+% for idx = 1:N_D
+%     d_sum = d_sum + d_data(idx,:);
+% end
+% d_bar = d_sum/N_D;
+% 
+% d_mod = d_data;
+% for idx=1:N_D
+%     d_mod(idx,:) = d_data(idx,:) - d_bar;
+% end
+% 
+% Data_2 = Import_data_from_file(file_list.CalReadings_FileList{file_idx});
+% N_D = Data_2(1,1);
+% N_A = Data_2(1,2);
+% N_C = Data_2(1,3);
+% N_frame = 8;
+% 
+% S = N_D + N_A + N_C;
+% 
+% for idx = 1:N_frame
+%     frames(:,:,idx) = Data_2((idx-1)*S+2:idx*S+1,:);
+% end
+% 
+% D_data(:,:,:) = frames(1:N_D,:,:);
+% A_data(:,:,:) = frames(N_D+1:N_D+N_A,:,:);
+% C_data(:,:,:) = frames(N_D+N_A+1:S,:,:);
+% 
+% F_D = zeros(4,4,N_frame);
+% F_A = zeros(4,4,N_frame);
+% C_Expected = zeros(3,N_c,N_frame);
+% 
+% for idx = 1:N_frame
+%     F_D(:,:,idx) = Calculate_FD(My_Data,D_data(:,:,idx),N_D);
+% 
+%     a_data = My_Data(N_D+2:N_D+N_A+1,:);
+%     c_data = My_Data(n-N_c+1:n,:);
+% 
+%     a_sum = zeros(1,3);
+%     for jdx = 1:N_A
+%         a_sum = a_sum + a_data(jdx,:);
+%     end
+%     a_bar = a_sum/N_A;
+%     
+%     a_mod = a_data;
+%     for jdx=1:N_A
+%         a_mod(jdx,:) = a_data(jdx,:) - a_bar;
+%     end
+%     
+%     c_sum = zeros(1,3);
+%     for jdx = 1:N_c
+%         c_sum = c_sum + c_data(jdx,:);
+%     end
+%     c_bar = c_sum/N_c;
+%     
+%     c_mod = c_data;
+%     for jdx=1:N_c
+%         c_mod(jdx,:) = c_data(jdx,:) - c_bar;
+%     end
+% 
+%     A = A_data(:,:,idx);
+% 
+%     A_sum = zeros(1,3);
+%     for jdx = 1:N_A
+%         A_sum = A_sum + A(jdx,:);
+%     end
+%     A_bar = A_sum/N_A;
+%     
+%     A_mod = A;
+%     for jdx=1:N_A
+%         A_mod(jdx,:) = A(jdx,:) - A_bar;
+%     end
+%     
+%     M = zeros(4*N_A,4);
+%     for jdx = 1:length(a_mod(:,1))
+%         a = a_mod(jdx,:)';
+%         b = A_mod(jdx,:)';
+%         
+%         M((jdx-1)*4+1:jdx*4,:) = [0 (b-a)';...
+%                       (b-a) ssm(b+a)];
+%     end
+%     
+%     [U_A,S_A,V_A] = svd(M);
+%     
+%     Quat_A = quaternion(V_A(:,end)');
+%     R_A = quat2rotm(Quat_A);
+%     
+%     p = A_bar' - R_A*a_bar';
+%     
+%     F_A(:,:,idx) = [R_A p;...
+%                   0 0 0 1];
+% 
+%     F_DA = F_D(:,:,idx)\F_A(:,:,idx);
+%     for jdx =1:N_c
+%         C_Expected(:,jdx,idx) = F_DA(1:3,4) + F_DA(1:3,1:3)*c_data(jdx,:)';
+%     end
+%     C_Output(:,:,idx) = C_Expected(:,:,idx)';
+% end
 
 function file_data = Import_data_from_file(file_name)
     % Set up the Import Options and import the data
