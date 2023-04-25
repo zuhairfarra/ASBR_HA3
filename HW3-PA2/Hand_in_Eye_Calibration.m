@@ -41,6 +41,10 @@ for idx = 1:config_num
     Mq((idx-1)*4+1:idx*4,:) = [(s_A-s_B) -(v_A-v_B)';...
                                (v_A-v_B) (s_A-s_B)*eye(3,3)+ssm(v_A+v_B)];
 
+    R_s((idx-1)*3+1:idx*3,:) = R_A-eye(3,3);
+    p_As(:,idx) = p_A;
+    p_Bs(:,idx) = p_B;
+
 end
 
 [U_Q,S_Q,V_Q] = svd(Mq);
@@ -48,8 +52,10 @@ end
 Quat_Q = quaternion(V_Q(:,end)');
 R_Q = quat2rotm(Quat_Q);
 
-A_x = R_A-eye(3,3);
-b_x = R_Q*p_B-p_A;
+A_x = R_s;
+for idx=1:config_num
+    b_x((idx-1)*3+1:idx*3,1) = R_Q*p_Bs(:,idx)-p_A(:,idx);
+end
 
 x = lsqr(A_x,b_x);
 
