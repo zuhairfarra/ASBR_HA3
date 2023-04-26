@@ -37,7 +37,7 @@ for idx = 1:length(d_mod(:,1))
                   (b-a) ssm(b+a)];
 end
 
-[U_1,S_1,V_1] = svd(M);
+[U_1,S_1,V_1] = svd(M)
 
 Quat1 = quaternion(V_1(:,end)');
 R1 = quat2rotm(Quat1);

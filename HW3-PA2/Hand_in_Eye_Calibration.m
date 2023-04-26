@@ -6,12 +6,7 @@ Mq = zeros(4*config_num,4);
 
 for idx = 1:config_num
     
-    if isequal(idx,10)
-        jdx = 1;
-    else
-        jdx = idx+1;
-    end
-    
+    jdx = idx+1;
     E1 = [quat2rotm(q1(idx,:)) t1(idx,:)';...
           0 0 0 1];
     
@@ -52,12 +47,12 @@ end
 Quat_Q = quaternion(V_Q(:,end)');
 R_Q = quat2rotm(Quat_Q);
 
-A_x = R_s;
+A_x = R_s
 for idx=1:config_num
-    b_x((idx-1)*3+1:idx*3,1) = R_Q*p_Bs(:,idx)-p_A(:,idx);
+    b_x((idx-1)*3+1:idx*3,1) = R_Q*p_Bs(:,idx)-p_As(:,idx)
 end
 
-x = lsqr(A_x,b_x);
+x = lsqr(A_x,b_x,1e-12);
 
 F_X = [R_Q x;...
        0 0 0 1];
