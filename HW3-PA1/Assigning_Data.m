@@ -202,23 +202,28 @@ for kdx=1:N_Files
         if isequal(kdx,3)
             C_Output = C_Expected(:,:,idx)'
         end
-
+        format short g
         C_Output = C_Expected(:,:,idx)';
+
+        C_Output = round(C_Output*100/100,2);
         
         if isequal(idx,1)
-            fid = fopen(file_list.TEST_Output_FileList{kdx},"w");
+            writematrix(C_Output,file_list.TEST_Output_FileList{kdx},"Delimiter",',');
+        else
+            writematrix(C_Output,file_list.TEST_Output_FileList{kdx},"Delimiter",',','WriteMode','append');
         end
-
-        formatSpec = "%6.2f, %6.2f, %6.2f\n";
-        fprintf(fid,formatSpec,C_Output);
+        format default
+%         formatSpec = "%6.2f, %6.2f, %6.2f\n";
+%         fprintf(fid,formatSpec,[C_Output(:,1) C_Output(:,2) C_Output(:,3)]);
         
-        if isequal(idx,N_frame)
-            fclose(fid);
-        end
+%         if isequal(idx,N_frame)
+%             fclose(fid);
+%         end
 
     end
 
 end
+
 % %% DEbug
 % file_idx = 1;
 % My_Data = Import_data_from_file(file_list.CalBody_FileList{file_idx});
